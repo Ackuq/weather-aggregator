@@ -5,6 +5,6 @@ services:
         build: ./http-proxy/
         command: sbt run
         volumes:
-            - "http-proxy:/http-proxy"
+            - "./http-proxy:/http-proxy"
         ports:
             - "9000:9000"
