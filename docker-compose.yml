@@ -44,3 +44,9 @@ services:
         command: sbt run
         volumes:
             - "./spark:/opt/application"
+
+    workers:
+        build: ./workers/
+        command: sbt run
+        volumes:
+            - "./workers:/workers"
