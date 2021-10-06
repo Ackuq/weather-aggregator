@@ -1,40 +1,46 @@
 version: "3.8"
 
 networks:
-  app-tier:
-    driver: bridge
+    app-tier:
+        driver: bridge
 
 services:
-  http-proxy:
-    build: ./http-proxy/
-    command: sbt run
-    volumes:
-      - "./http-proxy:/http-proxy"
-    ports:
-      - "9000:9000"
-    networks:
-      - app-tier
-  zookeeper:
-    image: "bitnami/zookeeper:latest"
-    ports:
-      - "9181:9181"
-    environment:
-      - ALLOW_ANONYMOUS_LOGIN=yes
-      - ZOO_PORT_NUMBER=9181
-    networks:
-      - app-tier
-  kafka:
-    image: "bitnami/kafka:latest"
-    ports:
-      - "9092:9092"
-    environment:
-      - KAFKA_BROKER_ID=1
-      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:9181
-      - ALLOW_PLAINTEXT_LISTENER=yes
-      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
-      - KAFKA_CFG_ADVERTISED_HOST_NAME=kafka
-    depends_on:
-      - zookeeper
-    networks:
-      - app-tier
+    http-proxy:
+        build: ./http-proxy/
+        command: sbt run
+        volumes:
+            - "./http-proxy:/http-proxy"
+        ports:
+            - "9000:9000"
+        networks:
+            - app-tier
+    zookeeper:
+        image: "bitnami/zookeeper:latest"
+        ports:
+            - "9181:9181"
+        environment:
+            - ALLOW_ANONYMOUS_LOGIN=yes
+            - ZOO_PORT_NUMBER=9181
+        networks:
+            - app-tier
+    kafka:
+        image: "bitnami/kafka:latest"
+        ports:
+            - "9092:9092"
+        environment:
+            - KAFKA_BROKER_ID=1
+            - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:9181
+            - ALLOW_PLAINTEXT_LISTENER=yes
+            - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092
+            - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+            - KAFKA_CFG_ADVERTISED_HOST_NAME=kafka
+        depends_on:
+            - zookeeper
+        networks:
+            - app-tier
+
+        spark:
+            build: ./spark/
+            command: sbt run
+            volumes:
+                - "./spark:/opt/application"
