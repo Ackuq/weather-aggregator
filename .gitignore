@@ -1,2 +1,67 @@
-*.class
+#### React
+
+node_modules
+.pnp
+.pnp.js
+
+# testing
+coverage
+
+# production
+build
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+
+#### Scala files
+
+# bloop and metals
+.bloop
+.bsp
+
+# Metals
+project/metals.sbt
+.metals
+
+# VSCode
+.vscode
+
+# Scala 3
+.tasty
+
+# sbt
+project/project/
+project/target/
+target/
+
+# Eclipse
+build/
+.classpath
+.project
+.settings
+.worksheet
+bin/
+.cache
+
+# IntelliJ IDEA
 *.log
+*.iml
+*.ipr
+*.iws
+.idea
+
+# Mac
+.DS_Store
+
+# General
+*.class
+
