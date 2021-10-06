@@ -1,0 +1,10 @@
+version: "3.8"
+
+services:
+    http-proxy:
+        build: ./http-proxy/
+        command: sbt run
+        volumes:
+            - "http-proxy:/http-proxy"
+        ports:
+            - "9000:9000"
