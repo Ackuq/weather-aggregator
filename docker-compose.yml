@@ -39,8 +39,8 @@ services:
         networks:
             - app-tier
 
-        spark:
-            build: ./spark/
-            command: sbt run
-            volumes:
-                - "./spark:/opt/application"
+    spark:
+        build: ./spark/
+        command: sbt run
+        volumes:
+            - "./spark:/opt/application"
