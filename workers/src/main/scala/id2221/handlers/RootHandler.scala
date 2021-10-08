@@ -48,8 +48,7 @@ abstract class RootHandler extends Runnable {
           val uuid = data.key();
           val payload = data.value();
           payload match {
-            case s"${key}Payload($longitude,$latitude,$date)" => {
-              println(key)
+            case s"Payload($longitude,$latitude,$date)" => {
               val dateOption: Option[ZonedDateTime] = date match {
                 case "None"  => None
                 case dateStr => Some(ZonedDateTime.parse(dateStr))
