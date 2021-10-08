@@ -11,7 +11,7 @@ import id2221.common.Forecast
 
 abstract class RootProducer(clientId: String) {
   final val logger = LoggerFactory.getLogger(this.getClass().getName())
-  final val TOPIC = "request";
+  final val TOPIC = "forecast";
   final val BROKERS =
     scala.util.Properties.envOrElse("BROKERS", "http://kafka:9092");
   final val CLIENT_ID = clientId;
@@ -38,7 +38,7 @@ abstract class RootProducer(clientId: String) {
     logger.info("Sending forecast to Kafka...")
     // The value will be a stringified version of the forecast, need to be matched to serialize
     val data =
-      new ProducerRecord[String, String](TOPIC, uuid, forecast.toString());
+      new ProducerRecord[String, String](forecast, uuid, forecast.toString());
     producer.send(data);
   }
 }
