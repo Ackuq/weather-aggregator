@@ -1,10 +1,10 @@
 package models;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 case class Forecast(
     provider: Provider.Provider,
-    timeFrom: LocalDateTime,
-    timeTo: LocalDateTime,
+    timeFrom: ZonedDateTime,
+    timeTo: ZonedDateTime,
     temperature: Double
 )

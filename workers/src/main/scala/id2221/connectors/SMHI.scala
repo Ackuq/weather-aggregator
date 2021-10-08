@@ -1,33 +1,69 @@
 package connectors;
-import models.Forecast;
-import models.Provider;
-import models.SMHIResponse.ForecastResponse;
-import akka.http._
+
+import models.{Provider, Forecast};
+import models.SMHIResponse.{ForecastResponse, TimeSerie};
+import exceptions.NoForecastFoundException;
+import unmarshaller.SMHIProtocol._;
 
 import scala.concurrent.{Future, Await}
 import scala.concurrent.duration._
 import scala.language.postfixOps
 import scala.util.{Failure, Success}
+
+import java.time.{ZonedDateTime, ZoneOffset}
+import java.time.format.DateTimeFormatter._
+
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
+import akka.http._
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport.sprayJsonUnmarshaller;
-import unmarshaller.SMHIProtocol._;
+
 import spray.json._
-import java.time.format.DateTimeFormatter._
-import java.time.LocalDateTime
-import models.SMHIResponse
 
-object SMHIConnector {
+object SMHIConnector extends Connector {
 
-  def getForecast(long: Double, lat: Double): Forecast = {
-    val requestUrl =
-      s"https://opendata-download-metfcst.smhi.se/api/category/pmp3g/version/2/geotype/point/lon/${long}/lat/${lat}/data.json";
+  private def findForecastFromDate(
+      date: ZonedDateTime,
+      forecastResponse: ForecastResponse
+  ): (
+      TimeSerie,
+      TimeSerie
+  ) = {
+    val forecastPairList = forecastResponse.timeSeries
+      .sliding(2)
+      .find(interval => {
+        // All the time series objects has a timestamp from when they start, get the stop timestamp from the next element in the list
+        assert(interval.length == 2);
+        val from = ZonedDateTime
+          .parse(interval(0).validTime, ISO_DATE_TIME)
+        val to = ZonedDateTime
+          .parse(interval(1).validTime, ISO_DATE_TIME)
 
+        (date.isEqual(from)) ||
+        (date.isAfter(from) && date.isBefore(to))
+      })
+    forecastPairList match {
+      case Some(List(a, b)) =>
+        (a, b)
+      case _ =>
+        throw NoForecastFoundException(
+          "No forecast found for the specified date"
+        )
+    }
+  }
+
+  def getForecast(
+      longitude: Double,
+      latitude: Double,
+      date: Option[ZonedDateTime] = None
+  ): Forecast = {
     implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
-    implicit val executionContext = system.executionContext
+
+    val requestUrl =
+      s"https://opendata-download-metfcst.smhi.se/api/category/pmp3g/version/2/geotype/point/lon/${longitude}/lat/${latitude}/data.json";
 
     val response: HttpResponse = Await.result(
       Http().singleRequest(HttpRequest(uri = requestUrl)),
@@ -37,21 +73,30 @@ object SMHIConnector {
     val parsedResponse: ForecastResponse =
       Await.result(Unmarshal(response.entity).to[ForecastResponse], 2 seconds);
 
-    val currentTimeForecast = parsedResponse.timeSeries(0);
+    val (from, to) = date match {
+      case Some(dateTime) =>
+        findForecastFromDate(dateTime, parsedResponse)
+      // If date is not set, just get the current forecast
+      case None =>
+        (parsedResponse.timeSeries(0), parsedResponse.timeSeries(1))
+    }
+
     // Find the temperature value, if temp parameter is not found, return a default (0.0)
-    // TODO: change Forecast parameters to Options!
-    val temperature = currentTimeForecast.parameters
+    val temperature = from.parameters
       .find(p => p.name == "t")
-      .getOrElse(SMHIResponse.Parameter("", "", 0, "", List(0.0)))
-      .values(0);
+      .get
+      .values
+      .head
 
     val forecast = Forecast(
       Provider.SMHI,
-      LocalDateTime.now(),
-      LocalDateTime.parse(currentTimeForecast.validTime, ISO_DATE_TIME),
+      ZonedDateTime
+        .parse(from.validTime, ISO_DATE_TIME),
+      ZonedDateTime
+        .parse(to.validTime, ISO_DATE_TIME),
       temperature
     );
-    println(s"Received SMHI Forecast: ${forecast}")
+    system.terminate();
     return forecast;
   }
 }
