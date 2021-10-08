@@ -1,7 +1,1 @@
-# Routes
-# This file defines all application routes (Higher priority routes first)
-# https://www.playframework.com/documentation/latest/ScalaRouting
-# ~~~~
-
-# An example controller showing a sample home page
-GET     /                       controllers.MessageController.getAll()
+GET     /:lat/:lng/                   id2221.controllers.MessageController.getForecast(lat: Double, lng: Double)
