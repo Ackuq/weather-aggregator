@@ -1,7 +1,7 @@
-package connectors
+package id2221.connectors
 
-import java.time.ZonedDateTime
-import models.Forecast
+import java.time.ZonedDateTime;
+import id2221.common.Forecast;
 
 trait Connector {
 

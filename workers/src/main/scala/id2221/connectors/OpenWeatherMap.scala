@@ -1,4 +1,4 @@
-package connectors;
+package id2221.connectors;
 
 import java.time.{ZonedDateTime, Instant, ZoneOffset};
 import scala.util.Properties;
@@ -14,14 +14,17 @@ import akka.http.scaladsl.client.RequestBuilding.Get;
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport.sprayJsonUnmarshaller;
 
-import models.{Forecast, OpenWeatherMapResponse, Provider}
-import unmarshaller.OpenWeatherMapProtocol._;
-import exceptions.NoForecastFoundException;
+import id2221.models.OpenWeatherMapResponse;
+import id2221.common.{Forecast, Provider};
+import id2221.unmarshaller.OpenWeatherMapProtocol._;
+import id2221.exceptions.NoForecastFoundException;
+import org.slf4j.LoggerFactory;
 
 object OpenWeatherMap extends Connector {
-  val API_KEY = Properties.envOrNone("OWM_API_KEY");
+  final val logger = LoggerFactory.getLogger(METConnector.getClass().getName());
+  final val API_KEY = Properties.envOrNone("OWM_API_KEY");
 
-  val baseURL = Uri("https://api.openweathermap.org/data/2.5/onecall")
+  final val baseURL = Uri("https://api.openweathermap.org/data/2.5/onecall")
 
   private def findForecastFromDate(
       date: ZonedDateTime,
@@ -59,6 +62,7 @@ object OpenWeatherMap extends Connector {
       latitude: Double,
       date: Option[ZonedDateTime] = None
   ): Forecast = {
+    logger.info("Fetching forecast...");
     if (API_KEY.isEmpty) {
       throw new Exception(
         "Must specify OpenWeatherMap API key by setting the OWM_API_KEY environment variable"

@@ -1,4 +1,4 @@
-package models
+package id2221.models
 
 object OpenWeatherMapResponse {
   final case class WeatherObject(

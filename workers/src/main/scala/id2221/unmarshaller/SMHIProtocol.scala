@@ -1,8 +1,8 @@
-package unmarshaller
+package id2221.unmarshaller
 
-import models.SMHIResponse._;
+import id2221.models.SMHIResponse
+
 import spray.json.DefaultJsonProtocol
-import models.SMHIResponse
 
 object SMHIProtocol extends DefaultJsonProtocol {
   implicit val geometryFormat = jsonFormat2(SMHIResponse.Geometry);

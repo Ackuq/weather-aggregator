@@ -1,9 +1,9 @@
-package connectors;
+package id2221.connectors;
 
-import models.{Provider, Forecast};
-import models.SMHIResponse.{ForecastResponse, TimeSerie};
-import exceptions.NoForecastFoundException;
-import unmarshaller.SMHIProtocol._;
+import id2221.common.{Provider, Forecast};
+import id2221.models.SMHIResponse.{ForecastResponse, TimeSerie};
+import id2221.exceptions.NoForecastFoundException;
+import id2221.unmarshaller.SMHIProtocol._;
 
 import scala.concurrent.{Future, Await}
 import scala.concurrent.duration._
@@ -22,8 +22,10 @@ import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport.sprayJsonUnmarshaller;
 
 import spray.json._
+import org.slf4j.LoggerFactory;
 
 object SMHIConnector extends Connector {
+  final val logger = LoggerFactory.getLogger(METConnector.getClass().getName());
 
   private def findForecastFromDate(
       date: ZonedDateTime,
@@ -60,6 +62,7 @@ object SMHIConnector extends Connector {
       latitude: Double,
       date: Option[ZonedDateTime] = None
   ): Forecast = {
+    logger.info("Fetching forecast...");
     implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
 
     val requestUrl =

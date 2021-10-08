@@ -1,4 +1,4 @@
-package models
+package id2221.models
 
 object METResponse {
   final case class TimeSeriesDataInstantDetails(

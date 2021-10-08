@@ -1,6 +1,6 @@
-package unmarshaller
+package id2221.unmarshaller
 
-import models.OpenWeatherMapResponse;
+import id2221.models.OpenWeatherMapResponse;
 import spray.json.DefaultJsonProtocol
 
 object OpenWeatherMapProtocol extends DefaultJsonProtocol {
