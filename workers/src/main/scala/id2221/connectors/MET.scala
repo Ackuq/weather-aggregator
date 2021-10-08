@@ -1,8 +1,9 @@
-package connectors;
+package id2221.connectors;
 
-import models.{METResponse, Forecast, Provider};
-import exceptions.NoForecastFoundException;
-import scala.language.postfixOps;
+import id2221.models.METResponse;
+import id2221.exceptions.NoForecastFoundException;
+import id2221.common.{Forecast, Provider}
+import id2221.unmarshaller.METProtocol._;
 
 import akka.http.scaladsl.Http;
 import akka.http.scaladsl.model.Uri;
@@ -12,15 +13,17 @@ import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport.sprayJsonUnmars
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
 
+import scala.language.postfixOps;
 import scala.concurrent.Await;
 import scala.concurrent.duration.{DurationInt};
 
-import unmarshaller.METProtocol._;
 import java.time.format.DateTimeFormatter.ISO_DATE_TIME;
 import javax.print.attribute.standard.MediaSize.ISO
 import java.time.ZonedDateTime
+import org.slf4j.LoggerFactory;
 
 object METConnector extends Connector {
+  final val logger = LoggerFactory.getLogger(METConnector.getClass().getName());
   final val baseURL = Uri(
     "https://api.met.no/weatherapi/locationforecast/2.0/complete"
   );
@@ -59,6 +62,7 @@ object METConnector extends Connector {
       date: Option[ZonedDateTime] = None
   ): Forecast = {
     implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
+    logger.info("Fetching forecast...");
 
     val url =
       baseURL.withQuery(

@@ -1,4 +1,4 @@
-package models;
+package id2221.common;
 
 object Provider extends Enumeration {
   type Provider = String;

@@ -1,4 +1,4 @@
-package models;
+package id2221.common;
 
 import java.time.ZonedDateTime;
 

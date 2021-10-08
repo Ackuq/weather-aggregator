@@ -1,0 +1,16 @@
+FROM hseeberger/scala-sbt:8u302_1.5.5_2.13.6
+
+# Install the common files
+
+RUN mkdir -p /common
+
+COPY ./scala-common /common
+
+RUN cd /common && sbt publishLocal && cd ..
+
+RUN mkdir -p /http-proxy
+
+WORKDIR /http-proxy
+
+COPY ./http-proxy /http-proxy
+
