@@ -38,7 +38,7 @@ abstract class RootProducer(clientId: String) {
     logger.info("Sending forecast to Kafka...")
     // The value will be a stringified version of the forecast, need to be matched to serialize
     val data =
-      new ProducerRecord[String, String](forecast, uuid, forecast.toString());
+      new ProducerRecord[String, String](TOPIC, uuid, forecast.toString());
     producer.send(data);
   }
 }
