@@ -10,7 +10,7 @@ object RequestProducer {
   final val logger = LoggerFactory.getLogger(this.getClass().getName())
   final val TOPIC = "request";
   final val BROKERS =
-    scala.util.Properties.envOrElse("BROKERS", "http://kafka:9092");
+    scala.util.Properties.envOrElse("BROKERS", "localhost:9092");
 
   private def constructProducer() = {
     logger.info("Starting producer...")

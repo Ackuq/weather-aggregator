@@ -13,7 +13,7 @@ abstract class RootProducer(clientId: String) {
   final val logger = LoggerFactory.getLogger(this.getClass().getName())
   final val TOPIC = "forecast";
   final val BROKERS =
-    scala.util.Properties.envOrElse("BROKERS", "http://kafka:9092");
+    scala.util.Properties.envOrElse("BROKERS", "localhost:9092");
   final val CLIENT_ID = clientId;
 
   private def constructProducer() = {

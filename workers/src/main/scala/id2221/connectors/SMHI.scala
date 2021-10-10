@@ -25,7 +25,8 @@ import spray.json._
 import org.slf4j.LoggerFactory;
 
 object SMHIConnector extends Connector {
-  final val logger = LoggerFactory.getLogger(METConnector.getClass().getName());
+  final val logger =
+    LoggerFactory.getLogger(SMHIConnector.getClass().getName());
 
   private def findForecastFromDate(
       date: ZonedDateTime,

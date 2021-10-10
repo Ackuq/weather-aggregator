@@ -3,8 +3,6 @@ scalaVersion := "2.13.6"
 version := "0.1.0"
 organization := "id2221"
 
-fork in run := true
-
 val AkkaVersion = "2.6.8"
 val AkkaHttpVersion = "10.2.6"
 

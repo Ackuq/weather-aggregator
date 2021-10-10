@@ -57,7 +57,7 @@ class MessageController @Inject() (
         }
       } catch {
         case exception: TimeoutException => {
-          logger.warn(s"Handling of consumer took too long to process")
+          logger.warn(s"Handling of consumer took too long to process");
           InternalServerError(
             createErrorResponse(
               InternalServerError.header.status,

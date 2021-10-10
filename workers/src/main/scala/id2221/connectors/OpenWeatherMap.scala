@@ -21,7 +21,8 @@ import id2221.exceptions.NoForecastFoundException;
 import org.slf4j.LoggerFactory;
 
 object OpenWeatherMap extends Connector {
-  final val logger = LoggerFactory.getLogger(METConnector.getClass().getName());
+  final val logger =
+    LoggerFactory.getLogger(OpenWeatherMap.getClass().getName());
   final val API_KEY = Properties.envOrNone("OWM_API_KEY");
 
   final val baseURL = Uri("https://api.openweathermap.org/data/2.5/onecall")

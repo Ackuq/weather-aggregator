@@ -17,8 +17,10 @@ services:
             - "9000:9000"
         networks:
             - app-tier
+        environment:
+            BROKERS: kafka:9092
     zookeeper:
-        image: "bitnami/zookeeper:latest"
+        image: "bitnami/zookeeper:3.7.0"
         ports:
             - "9181:9181"
         environment:
@@ -27,7 +29,7 @@ services:
         networks:
             - app-tier
     kafka:
-        image: "bitnami/kafka:latest"
+        image: "bitnami/kafka:2.8.1"
         ports:
             - "9092:9092"
         environment:
@@ -56,3 +58,9 @@ services:
         volumes:
             - "./workers:/workers"
             - "./scala-common:/common"
+        environment:
+            BROKERS: kafka:9092
+            # API key to the OpenWeatherMap API, you should have this defined in your .env file
+            OWM_API_KEY: ${OWM_API_KEY}
+        networks:
+            - app-tier
