@@ -1,26 +1,22 @@
-package id2221.producers
+package id2221.producers;
 
-import java.util.Properties;
-import org.apache.kafka.clients.producer.{
-  ProducerConfig,
-  KafkaProducer,
-  ProducerRecord
-}
 import org.slf4j.LoggerFactory;
-import id2221.common.Forecast
+import org.apache.kafka.clients.producer.{KafkaProducer, ProducerConfig}
+import java.util.Properties
+import id2221.common.Payload
+import org.apache.kafka.clients.producer.ProducerRecord
 
-abstract class RootProducer(clientId: String) {
+object RequestProducer {
   final val logger = LoggerFactory.getLogger(this.getClass().getName())
-  final val TOPIC = "forecast";
+  final val TOPIC = "request";
   final val BROKERS =
     scala.util.Properties.envOrElse("BROKERS", "localhost:9092");
-  final val CLIENT_ID = clientId;
 
   private def constructProducer() = {
     logger.info("Starting producer...")
     val props = new Properties();
     props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, BROKERS);
-    props.put(ProducerConfig.CLIENT_ID_CONFIG, CLIENT_ID);
+    props.put(ProducerConfig.CLIENT_ID_CONFIG, "RequestProducer");
     props.put(
       ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
       "org.apache.kafka.common.serialization.StringSerializer"
@@ -32,13 +28,13 @@ abstract class RootProducer(clientId: String) {
     new KafkaProducer[String, String](props);
   }
 
-  val producer = constructProducer()
+  val producer = constructProducer();
 
-  def sendForecast(forecast: Forecast, uuid: String) = {
+  def requestData(payload: Payload, uuid: String) = {
     logger.info("Sending forecast to Kafka...")
     // The value will be a stringified version of the forecast, need to be matched to serialize
     val data =
-      new ProducerRecord[String, String](TOPIC, uuid, forecast.toString());
+      new ProducerRecord[String, String](TOPIC, uuid, payload.toString());
     producer.send(data);
   }
 }

@@ -9,5 +9,6 @@ scalaVersion := "2.13.6"
 
 libraryDependencies ++= Seq(
   guice,
-  "org.apache.kafka" % "kafka_2.11" % "1.0.0"
+  "org.apache.kafka" %% "kafka" % "2.8.1",
+  "id2221" %% "scala-common" % "0.1.0"
 )
