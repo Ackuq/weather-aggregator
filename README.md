@@ -15,7 +15,7 @@ This project is done as a part of the course ID2221 at KTH.
 │       ├── App.tsx       // React component for the frontend
 │       └── index.tsx     // Entry point for the frontend
 │
-├── http-proxy            // HTTP proxy for the UI to send requests to the backend
+├── http-proxy            // HTTP proxy using Play
 │   ├── build.sbt         // SBT build file for the http proxy
 │   ├── app               // Source code for the http proxy
 │   |   ├── consumers     // Kafka consumers
@@ -45,12 +45,39 @@ This project is done as a part of the course ID2221 at KTH.
         └── Main.scala    // Entry point for the spark application
 ```
 
+## Architecture
+
+-   [Scala](https://www.scala-lang.org/) - Main language for the project.
+-   [Kafka](https://kafka.apache.org/) - Used for messaging between the different services.
+-   [Spark](https://spark.apache.org/) - Used for data processing.
+-   [Play](https://www.playframework.com/) - Used for the HTTP proxy.
+-   [React](https://reactjs.org/) - Used for the frontend.
+
+## Getting started
+
+### Requirements
+
+-   [Docker](https://www.docker.com/)
+-   [Docker Compose](https://docs.docker.com/compose/install/)
+
+### Starting the services
+
+```sh
+$ docker compose up -d
+```
+
+### Retrieving logs
+
+```sh
+$ docker compose logs --follow
+```
+
 ## Environment variables
 
 Sensitive environment variables should be set inside a `.env` file, that is not committed to the repository. However, a `.env.example` file is provided as a template.
 
 ```
-cp .env.example .env
+$ cp .env.example .env
 ```
 
 ### `OWM_API_KEY`
