@@ -37,7 +37,7 @@ class MessageController @Inject() (
         val uuid = UUID.randomUUID().toString();
         RequestProducer.requestData(payload, uuid);
         val responseFuture = ResultConsumer.awaitValue(uuid);
-        val response = Await.ready(responseFuture, 20.seconds);
+        val response = Await.ready(responseFuture, 10.seconds);
         response.value.get match {
           case Success(value) => {
             // TODO: Handle return value?
