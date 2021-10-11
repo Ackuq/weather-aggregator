@@ -1,13 +1,13 @@
 package id2221.producers;
 
-import org.slf4j.LoggerFactory;
+import play.api.Logger;
 import org.apache.kafka.clients.producer.{KafkaProducer, ProducerConfig}
 import java.util.Properties
 import id2221.common.Payload
 import org.apache.kafka.clients.producer.ProducerRecord
 
 object RequestProducer {
-  final val logger = LoggerFactory.getLogger(this.getClass().getName())
+  final val logger = Logger(this.getClass().getName())
   final val TOPIC = "request";
   final val BROKERS =
     scala.util.Properties.envOrElse("BROKERS", "localhost:9092");
@@ -37,4 +37,5 @@ object RequestProducer {
       new ProducerRecord[String, String](TOPIC, uuid, payload.toString());
     producer.send(data);
   }
+
 }
