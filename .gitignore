@@ -42,7 +42,7 @@ project/metals.sbt
 project/project/
 project/target/
 target/
-project/
+metals.sbt
 
 # Eclipse
 build/
