@@ -1,11 +1,12 @@
-name := """http-proxy"""
-organization := "id2221"
+ThisBuild / scalaVersion := "2.13.6"
+ThisBuild / organization := "id2221"
+ThisBuild / version := "1.0.0"
 
-version := "1.0.0"
-
-lazy val root = (project in file(".")).enablePlugins(PlayScala)
-
-scalaVersion := "2.13.6"
+lazy val `http-proxy` = (project in file("."))
+  .settings(
+    name := "http-proxy"
+  )
+  .enablePlugins(PlayScala)
 
 libraryDependencies ++= Seq(
   guice,
