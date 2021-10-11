@@ -4,6 +4,8 @@ This project is done as a part of the course ID2221 at KTH.
 
 ## File structure
 
+This project follows a mono-repo structure. With all the different projects for the system existing in a dedicated folder. The folder structure is as follows:
+
 ```
 ├── README.md
 ├── Dockerfile.*          // Dockerfile for each subproject
