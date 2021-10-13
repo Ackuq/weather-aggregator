@@ -55,10 +55,13 @@ services:
     command: sbt run
     volumes:
       - "./spark:/opt/application"
+      - "./scala-common:/common"
     environment:
       BROKERS: kafka:9092
     networks:
       - app-tier
+    depends-on:
+      - kafka
 
   workers:
     build:
