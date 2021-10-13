@@ -35,14 +35,20 @@ class MessageController @Inject() (
 
   final val logger = LoggerFactory.getLogger(this.getClass().getName());
 
-  def awaitForecast(uuid: String): Future[String] = Future {
+  def awaitForecast(uuid: String): String = {
+    logger.info(s"Awaiting result from $uuid...")
     var result: Option[String] = None
+    var i = 0;
     while ({ result = cache.get(uuid); result.isEmpty }) {
+      if (i == 100 * 100) {
+        throw new TimeoutException("Too long to process")
+      }
       Thread.sleep(100);
+      i += 1;
     }
     val value = result.get;
     logger.info(s"Got result $value for uuid $uuid")
-    return Future.successful(result.get);
+    return value;
   }
 
   def getForecast(lat: Double, lng: Double) = Action.async {
@@ -51,25 +57,9 @@ class MessageController @Inject() (
         val payload = Payload(lng, lat, None);
         val uuid = UUID.randomUUID().toString();
         RequestProducer.requestData(payload, uuid);
-        val response = Await.ready(awaitForecast(uuid), 10.seconds);
-
-        response.value.get match {
-          case Success(value) => {
-            // TODO: Handle return value?
-            Ok(createResultResponse(JsString(value)))
-          }
-          case Failure(exception) => {
-            logger.warn(
-              s"Process with UUID $uuid failed with exception: ${exception.getMessage()}"
-            )
-            InternalServerError(
-              createErrorResponse(
-                InternalServerError.header.status,
-                "Something went wrong"
-              )
-            )
-          }
-        }
+        val response = awaitForecast(uuid);
+        logger.info(s"Got response $response for uuid $uuid")
+        Ok(createResultResponse(JsString(response)));
       } catch {
         case exception: TimeoutException => {
           logger.warn(s"Handling of consumer took too long to process");
