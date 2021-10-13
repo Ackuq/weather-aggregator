@@ -17,6 +17,7 @@ import javax.inject._;
 import java.util.{Date, Properties};
 import java.util.UUID;
 
+import play.api.cache._
 import scala.util.{Success, Failure, Try};
 import scala.concurrent.ExecutionContext.Implicits.global;
 import scala.concurrent.duration.DurationInt;
@@ -26,9 +27,21 @@ import org.slf4j.LoggerFactory;
 
 @Singleton
 class MessageController @Inject() (
+    val cache: SyncCacheApi,
     val controllerComponents: ControllerComponents
 ) extends BaseController {
+  val consumerThread = new Thread(new ResultConsumer(cache));
+  consumerThread.start();
+
   final val logger = LoggerFactory.getLogger(this.getClass().getName());
+
+  def awaitForecast(uuid: String): Future[String] = Future {
+    var result: Option[String] = None
+    while ({ result = cache.get(uuid); result.isEmpty }) {
+      Thread.sleep(100);
+    }
+    return Future.successful(result.get);
+  }
 
   def getForecast(lat: Double, lng: Double) = Action.async {
     Future {
@@ -36,8 +49,8 @@ class MessageController @Inject() (
         val payload = Payload(lng, lat, None);
         val uuid = UUID.randomUUID().toString();
         RequestProducer.requestData(payload, uuid);
-        val responseFuture = ResultConsumer.awaitValue(uuid);
-        val response = Await.ready(responseFuture, 10.seconds);
+        val response = Await.ready(awaitForecast(uuid), 10.seconds);
+
         response.value.get match {
           case Success(value) => {
             // TODO: Handle return value?
