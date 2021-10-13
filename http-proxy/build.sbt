@@ -10,6 +10,7 @@ lazy val `http-proxy` = (project in file("."))
 
 libraryDependencies ++= Seq(
   guice,
+  caffeine,
   "org.apache.kafka" %% "kafka" % "2.8.1",
   "id2221" %% "scala-common" % "0.1.0"
 )
