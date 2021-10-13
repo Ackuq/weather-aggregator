@@ -5,20 +5,20 @@ import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.clients.producer.KafkaProducer
 import id2221.common.Forecast
 import org.apache.kafka.clients.producer.ProducerRecord
+import org.slf4j.LoggerFactory
 
 
 
 class SparkProducer(createProducer: () => KafkaProducer[String, String]) extends Serializable{
-  final val TOPIC = "result";
-  
+  final val TOPIC = "result";  
   // Delay instantiating the producer to avoid producer not being serializable when sending it from the driver node to executor nodes
   lazy val producer = createProducer()
   
   def sendTemp(avgTemp: Double, uuid: String) = {
-    println(s"Sending $avgTemp to $uuid");
+    println(s"Sending avg temperature $avgTemp to $uuid");
     val data =
       new ProducerRecord[String, String](TOPIC, uuid, avgTemp.toString());
-      producer.send(data);
+      producer.send(data); 
     }
   }
   
@@ -26,6 +26,7 @@ class SparkProducer(createProducer: () => KafkaProducer[String, String]) extends
     
     // Kafka config values
     final val BROKERS = scala.util.Properties.envOrElse("BROKERS", "kafka:9092");
+
     val kafkaConfig = {
       val conf = new Properties();
       conf.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, BROKERS);

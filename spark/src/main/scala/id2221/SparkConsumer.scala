@@ -23,7 +23,6 @@ class SparkConsumer extends Runnable {
 
   final val TOPIC = "forecast";
   final val BROKERS = scala.util.Properties.envOrElse("BROKERS", "kafka:9092");
-  
   def run(): Unit = {
 
     Logger.getLogger("org.apache.spark").setLevel(Level.WARN);
@@ -51,6 +50,7 @@ class SparkConsumer extends Runnable {
       rdd.foreach { content => 
         val clientId: String = content.key();
         val forecast: Forecast = ForecastParser.toForecast(content.value());
+        println(s"Received ${forecast.provider}-forecast")
         if(weatherClients.contains(clientId)){
           weatherClients(clientId) = weatherClients(clientId)+forecast;
         }
@@ -60,6 +60,7 @@ class SparkConsumer extends Runnable {
 
         // If three or more forecasts are received, we have received from all workers and can calculate average and send back to client
         if(weatherClients(clientId).size >= 3) {
+          println(s"Received all forecasts for client ${clientId}, sending response back to client.")
           val tempAvg = weatherClients(clientId).map(f => f.temperature).reduce((a ,b) => a + b)/weatherClients(clientId).size;
           weatherClients.-(clientId);
           producer.value.sendTemp(tempAvg, clientId);
@@ -70,7 +71,4 @@ class SparkConsumer extends Runnable {
     ssc.start()
     ssc.awaitTermination()
   }
-
-  
-
 }
