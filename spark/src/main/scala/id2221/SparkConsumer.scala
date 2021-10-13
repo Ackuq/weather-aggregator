@@ -21,10 +21,12 @@ import id2221.SparkProducer
 
 class SparkConsumer extends Runnable {
 
-  final val TOPIC = "weather-data";
+  final val TOPIC = "forecast";
   final val BROKERS = scala.util.Properties.envOrElse("BROKERS", "kafka:9092");
   
   def run(): Unit = {
+
+    Logger.getLogger("org.apache.spark").setLevel(Level.WARN);
 
     // Create Spark kafka input stream
     val conf = new SparkConf().setAppName("SparkApplication").setMaster("local[1]")
