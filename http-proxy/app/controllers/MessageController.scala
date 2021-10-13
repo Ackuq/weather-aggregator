@@ -40,6 +40,8 @@ class MessageController @Inject() (
     while ({ result = cache.get(uuid); result.isEmpty }) {
       Thread.sleep(100);
     }
+    val value = result.get;
+    logger.info(s"Got result $value for uuid $uuid")
     return Future.successful(result.get);
   }
 
