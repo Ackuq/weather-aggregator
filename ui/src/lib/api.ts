@@ -1,9 +1,7 @@
 const baseURL = process.env.REACT_APP_API_URL ?? 'http://localhost:9000';
 
 export interface LocationResult {
-    result: {
-        data: string;
-    };
+    result: string;
 }
 
 export interface ApiError {

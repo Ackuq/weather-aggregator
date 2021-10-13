@@ -40,7 +40,7 @@ class MessageController @Inject() (
     var result: Option[String] = None
     var i = 0;
     while ({ result = cache.get(uuid); result.isEmpty }) {
-      if (i == 100 * 100) {
+      if (i >= 100) {
         throw new TimeoutException("Too long to process")
       }
       Thread.sleep(100);

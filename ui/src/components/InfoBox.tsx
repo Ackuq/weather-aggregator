@@ -32,9 +32,10 @@ const Box: React.FC<{ title?: string; className?: string }> = ({
 
 interface ContentProps {
     location: LatLng;
+    locationInfo?: LocationResult;
     error?: Partial<ApiError>;
 }
-const Content: React.FC<ContentProps> = ({ location, error }) => {
+const Content: React.FC<ContentProps> = ({ location, locationInfo, error }) => {
     return (
         <>
             <Box title="Chosen location">
@@ -52,6 +53,11 @@ const Content: React.FC<ContentProps> = ({ location, error }) => {
                         {error.code && <span>Code: {error.code}</span>}
                         {error.message && <span>Message: {error.message}</span>}
                     </div>
+                </Box>
+            )}
+            {locationInfo && (
+                <Box title="Temperature (average)">
+                    <div>{parseFloat(locationInfo.result).toFixed(2)}</div>
                 </Box>
             )}
         </>
@@ -94,7 +100,11 @@ const InfoBox: React.FC = () => {
             {location === undefined ? (
                 <Box title="Click on a location to get started" />
             ) : (
-                <Content location={location} error={error} />
+                <Content
+                    location={location}
+                    locationInfo={locationInfo}
+                    error={error}
+                />
             )}
         </div>
     );
