@@ -53,7 +53,7 @@ services:
       dockerfile: ./Dockerfile.spark
     command: sbt run
     volumes:
-      - "./spark:/opt/application"
+      - "./spark:/spark"
       - "./scala-common:/common"
     environment:
       BROKERS: kafka:9092
