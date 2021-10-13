@@ -23,7 +23,7 @@ export const fetchLocation = (
     lat: number,
     lng: number
 ): Promise<LocationResult> => {
-    return fetch(`${baseURL}/${lat}/${lng}/`, {
+    return fetch(`${baseURL}/${lat.toFixed(6)}/${lng.toFixed(6)}/`, {
         headers: {
             'Content-Type': 'application/json',
         },
