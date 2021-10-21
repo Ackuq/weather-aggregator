@@ -66,7 +66,7 @@ abstract class RootHandler extends Runnable {
             }
           } catch {
             case e: Throwable => {
-              logger.info("Failed to parse record");
+              logger.info("Failed to handle message");
               e.printStackTrace();
             }
           }

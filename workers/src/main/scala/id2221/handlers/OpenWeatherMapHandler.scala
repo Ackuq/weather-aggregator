@@ -13,11 +13,21 @@ class OpenWeatherMapHandler extends RootHandler {
       latitude: Double,
       dateOption: Option[ZonedDateTime]
   ): Unit = {
-    val forecast = OpenWeatherMap.getForecast(
-      longitude.toDouble,
-      latitude.toDouble,
-      dateOption
-    )
-    OpenWeatherMapProducer.sendForecast(forecast, uuid);
+    try {
+      val forecast = OpenWeatherMap.getForecast(
+        longitude.toDouble,
+        latitude.toDouble,
+        dateOption
+      )
+      OpenWeatherMapProducer.sendForecast(forecast, uuid);
+    } catch {
+      case e: Throwable => {
+        logger.warn("Failed to fetch OpenWeatherMap forecast")
+        OpenWeatherMapProducer.sendErrorMessage(
+          "Failed to get OpenWeatherMap forecast information",
+          uuid
+        )
+      }
+    }
   }
 }

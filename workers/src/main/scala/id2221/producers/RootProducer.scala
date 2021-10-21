@@ -41,4 +41,12 @@ abstract class RootProducer(clientId: String) {
       new ProducerRecord[String, String](TOPIC, uuid, forecast.toString());
     producer.send(data);
   }
+
+  def sendErrorMessage(message: String, uuid: String) = {
+    logger.info("Sending error message to Kafka...")
+    // The value will be a stringified version of the forecast, need to be matched to serialize
+    val data =
+      new ProducerRecord[String, String](TOPIC, uuid, message);
+    producer.send(data);
+  }
 }

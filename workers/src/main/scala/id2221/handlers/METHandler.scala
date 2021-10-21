@@ -12,11 +12,21 @@ class METHandler extends RootHandler {
       latitude: Double,
       dateOption: Option[ZonedDateTime]
   ): Unit = {
-    val forecast = METConnector.getForecast(
-      longitude.toDouble,
-      latitude.toDouble,
-      dateOption
-    )
-    METProducer.sendForecast(forecast, uuid);
+    try {
+      val forecast = METConnector.getForecast(
+        longitude.toDouble,
+        latitude.toDouble,
+        dateOption
+      )
+      METProducer.sendForecast(forecast, uuid);
+    } catch {
+      case e: Throwable => {
+        logger.warn("Failed to fetch MET forecast")
+        METProducer.sendErrorMessage(
+          "Failed to get MET forecast information",
+          uuid
+        )
+      }
+    }
   }
 }

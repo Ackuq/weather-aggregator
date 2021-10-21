@@ -12,11 +12,21 @@ class SMHIHandler extends RootHandler {
       latitude: Double,
       dateOption: Option[ZonedDateTime]
   ): Unit = {
-    val forecast = SMHIConnector.getForecast(
-      longitude.toDouble,
-      latitude.toDouble,
-      dateOption
-    )
-    SMHIProducer.sendForecast(forecast, uuid);
+    try {
+      val forecast = SMHIConnector.getForecast(
+        longitude.toDouble,
+        latitude.toDouble,
+        dateOption
+      )
+      SMHIProducer.sendForecast(forecast, uuid);
+    } catch {
+      case e: Throwable => {
+        logger.warn("Failed to fetch SMHI forecast")
+        SMHIProducer.sendErrorMessage(
+          "Failed to get SMHI forecast information",
+          uuid
+        )
+      }
+    }
   }
 }
