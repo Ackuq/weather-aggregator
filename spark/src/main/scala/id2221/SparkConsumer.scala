@@ -44,7 +44,7 @@ class SparkConsumer extends Runnable {
     // Creeate spark producer using sparkcontext.broadcast, to make sure it is only sent once to the executor nodes
     val producer = ssc.sparkContext.broadcast(SparkProducer());
     // To save incoming weatherclients until forecasts are recieved by all workers
-    val weatherClients = scala.collection.mutable.Map[String, Set[Option[Forecast]]]();
+    val weatherClients = scala.collection.mutable.Map[String, List[Option[Forecast]]]();
 
     inputStream.foreachRDD { rdd => 
       rdd.foreach { content => 
@@ -60,10 +60,10 @@ class SparkConsumer extends Runnable {
         }
 
         if(weatherClients.contains(clientId)){
-          weatherClients(clientId) = weatherClients(clientId)+forecast;
+          weatherClients(clientId) = forecast :: weatherClients(clientId);
         }
         else {
-          weatherClients.put(clientId, Set(forecast))
+          weatherClients.put(clientId, List(forecast))
         }
 
         // If three or more forecasts are received, we have received from all workers and can calculate average and send back to client
