@@ -54,7 +54,7 @@ class SparkConsumer extends Runnable {
 
         forecast match {
           case Some(f) => 
-            println(s"Received ${f.provider}-forecast")
+            println(s"Received ${f.provider}-forecast from UUID $clientId")
           case None => 
             println("Received failed forecast");
         }
@@ -65,6 +65,8 @@ class SparkConsumer extends Runnable {
         else {
           weatherClients.put(clientId, List(forecast))
         }
+
+        println(s"Current list size for $clientId is ${weatherClients(clientId).size}");
 
         // If three or more forecasts are received, we have received from all workers and can calculate average and send back to client
         if(weatherClients(clientId).size >= 3) {
