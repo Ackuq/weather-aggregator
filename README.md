@@ -61,6 +61,7 @@ This project follows a mono-repo structure. With all the different projects for 
 
 -   [Docker](https://www.docker.com/)
 -   [Docker Compose](https://docs.docker.com/compose/install/)
+-   [Yarn](https://yarnpkg.com/)
 
 ### Starting the services
 
@@ -72,6 +73,12 @@ $ docker compose up -d
 
 ```sh
 $ docker compose logs --follow
+```
+
+### Starting the frontend application
+
+```sh
+$ cd ui && yarn install && yarn start
 ```
 
 ## Environment variables
