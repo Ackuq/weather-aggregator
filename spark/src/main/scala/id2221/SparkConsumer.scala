@@ -44,13 +44,21 @@ class SparkConsumer extends Runnable {
     // Creeate spark producer using sparkcontext.broadcast, to make sure it is only sent once to the executor nodes
     val producer = ssc.sparkContext.broadcast(SparkProducer());
     // To save incoming weatherclients until forecasts are recieved by all workers
-    val weatherClients = scala.collection.mutable.Map[String, Set[Forecast]]();
+    val weatherClients = scala.collection.mutable.Map[String, Set[Option[Forecast]]]();
 
     inputStream.foreachRDD { rdd => 
       rdd.foreach { content => 
         val clientId: String = content.key();
-        val forecast: Forecast = ForecastParser.toForecast(content.value());
-        println(s"Received ${forecast.provider}-forecast")
+        val forecast: Option[Forecast] = ForecastParser.toForecast(content.value());
+        
+
+        forecast match {
+          case Some(f) => 
+            println(s"Received ${f.provider}-forecast")
+          case None => 
+            println("Received failed forecast");
+        }
+
         if(weatherClients.contains(clientId)){
           weatherClients(clientId) = weatherClients(clientId)+forecast;
         }
@@ -61,7 +69,7 @@ class SparkConsumer extends Runnable {
         // If three or more forecasts are received, we have received from all workers and can calculate average and send back to client
         if(weatherClients(clientId).size >= 3) {
           println(s"Received all forecasts for client ${clientId}, sending response back to client.")
-          val tempAvg = weatherClients(clientId).map(f => f.temperature).reduce((a ,b) => a + b)/weatherClients(clientId).size;
+          val tempAvg = weatherClients(clientId).flatten.map(f => f.temperature).reduce((a ,b) => a + b)/weatherClients(clientId).size;
           weatherClients.-(clientId);
           producer.value.sendTemp(tempAvg, clientId);
         }
