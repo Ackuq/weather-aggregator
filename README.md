@@ -60,7 +60,6 @@ This project follows a mono-repo structure. With all the different projects for 
 ### Requirements
 
 -   [Docker](https://www.docker.com/)
--   [Docker Compose](https://docs.docker.com/compose/install/)
 -   [Yarn](https://yarnpkg.com/)
 
 ### Starting the services
